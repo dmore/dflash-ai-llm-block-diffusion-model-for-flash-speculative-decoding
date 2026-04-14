@@ -343,7 +343,9 @@ def _run_mlx(args: argparse.Namespace) -> None:
     dataset = load_and_process_dataset(args.dataset)
     dataset = _limit_dataset(dataset, args.max_samples)
 
-    list(stream_generate_baseline(model, tokenizer, tokenizer.encode("Hi"), 3))
+    warmup_prompt = tokenizer.encode("Hi")
+    list(stream_generate_baseline(model, tokenizer, warmup_prompt, 3, sampler=sampler))
+    list(stream_generate(model, draft, tokenizer, warmup_prompt, block_size, 3, sampler=sampler))
 
     responses = []
     for idx in tqdm(range(len(dataset))):

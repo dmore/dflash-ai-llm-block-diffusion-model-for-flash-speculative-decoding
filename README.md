@@ -100,7 +100,7 @@ print(tokenizer.decode(output[0], skip_special_tokens=False))
 
 ### MLX (Apple Silicon)
 
-This MLX implementation has been tested on an Apple M5 Pro with Qwen3 and Qwen3.5 models.
+There have been many great community DFlash implementations on MLX; we provide a simple and efficient one here, tested on an Apple M5 Pro with Qwen3 and Qwen3.5 models.
 
 ```python
 from dflash.model_mlx import load, load_draft, stream_generate
