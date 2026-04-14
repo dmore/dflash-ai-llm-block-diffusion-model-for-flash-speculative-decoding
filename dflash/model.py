@@ -59,6 +59,7 @@ def _cuda_time() -> float:
     return time.perf_counter()
 
 
+@torch.inference_mode()
 def dflash_generate(
     model: "DFlashDraftModel",
     target: nn.Module,

@@ -61,17 +61,19 @@ def _prepare_dataset(name: str) -> Path:
     cfg = DATASETS[name]
     CACHE_DIR.mkdir(exist_ok=True)
     out_path = CACHE_DIR / f"{name}.jsonl"
+    tmp_path = out_path.with_name(f"{out_path.name}.{os.getpid()}.tmp")
 
     print(f"[download] {name} ...")
     dataset = load_dataset(*cfg["load_args"], **cfg["load_kwargs"])
 
-    with open(out_path, "w") as f:
+    with open(tmp_path, "w") as f:
         for row in dataset:
             if cfg.get("multi_turn"):
                 turns = cfg["format"](row)
             else:
                 turns = [cfg["format"](row)]
             f.write(json.dumps({"turns": turns}) + "\n")
+    os.replace(tmp_path, out_path)
 
     with open(out_path) as f:
         num_samples = sum(1 for _ in f)
