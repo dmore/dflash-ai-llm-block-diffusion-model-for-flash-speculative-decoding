@@ -42,10 +42,10 @@ Use a separate virtual environment for each to avoid conflict.
 | **vLLM** | See below |
 | **MLX** (Apple Silicon) | `pip install -e ".[mlx]"` |
 
-**vLLM:** DFlash support requires the nightly build:
+**vLLM:** (We temporarily modify the installation through this PR to support interleaved SWA and ensure correct handling of target hidden states for optimal performance):
 ```bash
 uv pip install -e ".[vllm]"
-uv pip install -U vllm --torch-backend=auto --extra-index-url https://wheels.vllm.ai/nightly
+uv pip install -U --torch-backend=auto "vllm @ git+https://github.com/vllm-project/vllm.git@refs/pull/40898/head"
 ```
 
 ## 🚀 Quick Start
