@@ -32,7 +32,6 @@ https://github.com/user-attachments/assets/5b29cabb-eb95-44c9-8ffe-367c0758de8c
 | DeepSeek-V4-Flash | Coming soon |
 | DeepSeek-V4-Pro | Coming soon |
 | MiniMax-M2.7 | Coming soon |
-| Qwen3.5-397B-A17B | Coming soon |
 | GLM-5.1 | Coming soon |
 
 > Feel free to open a GitHub issue to request support for additional models. We will also open-source the training recipe soon, so you can train your own DFlash draft model to accelerate any LLM.
