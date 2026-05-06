@@ -12,7 +12,7 @@ https://github.com/user-attachments/assets/5b29cabb-eb95-44c9-8ffe-367c0758de8c
 | Model | DFlash Draft |
 |---|---|
 | gemma-4-26B-A4B-it | [z-lab/gemma-4-26B-A4B-it-DFlash](https://huggingface.co/z-lab/gemma-4-26B-A4B-it-DFlash) |
-| gemma4-31B-it | [z-lab/gemma-4-31B-it-DFlash](https://huggingface.co/z-lab/gemma-4-31B-it-DFlash) |
+| gemma-4-31B-it | [z-lab/gemma-4-31B-it-DFlash](https://huggingface.co/z-lab/gemma-4-31B-it-DFlash) |
 | Qwen3.6-27B | [z-lab/Qwen3.6-27B-DFlash](https://huggingface.co/z-lab/Qwen3.6-27B-DFlash) |
 | Qwen3.6-35B-A3B | [z-lab/Qwen3.6-35B-A3B-DFlash](https://huggingface.co/z-lab/Qwen3.6-35B-A3B-DFlash) |
 | MiniMax-M2.5 (Preview) | [z-lab/MiniMax-M2.5-DFlash](https://huggingface.co/z-lab/MiniMax-M2.5-DFlash) |
@@ -47,21 +47,51 @@ Use a separate virtual environment for each to avoid conflict.
 | **vLLM** | See below |
 | **MLX** (Apple Silicon) | `pip install -e ".[mlx]"` |
 
-**vLLM:** Mainline vLLM already includes DFlash. For the newer SWA draft models and Gemma4 models, install the matching temporary vLLM PR:
+**vLLM:** vLLM v0.20.1+ includes core DFlash support. Use the standard install for most models:
 ```bash
 uv pip install -e ".[vllm]"
+```
 
-# Non-Gemma4 DFlash models
-uv pip install -U --torch-backend=auto "vllm @ git+https://github.com/vllm-project/vllm.git@refs/pull/40898/head"
+Gemma4 DFlash currently needs our temporary vLLM Gemma4 build. Docker is recommended:
+```bash
+docker pull ghcr.io/z-lab/vllm-openai:gemma4-dflash-cu130
+```
 
-# Gemma4 DFlash models
-uv pip install -U --torch-backend=auto "vllm @ git+https://github.com/vllm-project/vllm.git@refs/pull/41703/head"
+Source fallback for Gemma4:
+```bash
+uv pip install -U --torch-backend=auto \
+  "vllm @ git+https://github.com/vllm-project/vllm.git@refs/pull/41703/head"
+```
+
+Newer non-Gemma4 SWA draft models use the SWA support branch:
+```bash
+uv pip install -U --torch-backend=auto \
+  "vllm @ git+https://github.com/vllm-project/vllm.git@refs/pull/40898/head"
 ```
 
 ## 🚀 Quick Start
 
 ### vLLM
 
+Gemma4 with Docker:
+```bash
+docker run --rm -it \
+  --gpus all \
+  --ipc=host \
+  --shm-size=16g \
+  -p 8000:8000 \
+  -v ~/.cache/huggingface:/root/.cache/huggingface \
+  ghcr.io/z-lab/vllm-openai:gemma4-dflash-cu130 \
+  google/gemma-4-26B-A4B-it \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --speculative-config '{"method": "dflash", "model": "z-lab/gemma-4-26B-A4B-it-DFlash", "num_speculative_tokens": 15, "attention_backend": "flash_attn"}' \
+  --attention-backend triton_attn \
+  --max-num-batched-tokens 32768 \
+  --trust-remote-code
+```
+
+Non-Gemma4 models:
 ```bash
 vllm serve Qwen/Qwen3.5-27B \
   --speculative-config '{"method": "dflash", "model": "z-lab/Qwen3.5-27B-DFlash", "num_speculative_tokens": 15}' \
