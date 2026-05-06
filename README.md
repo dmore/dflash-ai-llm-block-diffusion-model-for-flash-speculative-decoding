@@ -47,10 +47,15 @@ Use a separate virtual environment for each to avoid conflict.
 | **vLLM** | See below |
 | **MLX** (Apple Silicon) | `pip install -e ".[mlx]"` |
 
-**vLLM:** (We temporarily modify the installation through this PR to support interleaved SWA and ensure correct handling of target hidden states for optimal performance):
+**vLLM:** Mainline vLLM already includes DFlash. For the newer SWA draft models and Gemma4 models, install the matching temporary vLLM PR:
 ```bash
 uv pip install -e ".[vllm]"
+
+# Non-Gemma4 DFlash models
 uv pip install -U --torch-backend=auto "vllm @ git+https://github.com/vllm-project/vllm.git@refs/pull/40898/head"
+
+# Gemma4 DFlash models
+uv pip install -U --torch-backend=auto "vllm @ git+https://github.com/vllm-project/vllm.git@refs/pull/41703/head"
 ```
 
 ## 🚀 Quick Start
